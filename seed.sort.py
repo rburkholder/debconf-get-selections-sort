@@ -1,4 +1,4 @@
- #
+#
 # author: Raymond Burkholder
 #         rburkholder@quovadis.bm
 # created: 2015/08/10
@@ -14,8 +14,8 @@ import sys
 import re
 
 # some output modifiers, which could be done from command line at some point
-if_di_avail = True  # True: exclude other entries d-i entry available, False to print all entries
-answers_only = True # True: only print entries with answers
+di_only = True  # True: exclude other entries d-i entry available, False to print all entries
+answers_only = False # True: only print entries with answers
 
 # http://stackoverflow.com/a/17927520/2730971
 f = sys.stdin
@@ -29,7 +29,7 @@ if len(sys.argv) > 1:
 # 3 empty or white space: append
 # 4 anything else:  error, or ignore
 
-state = 0  # state transitions
+state = 0 # state transitions
 buf = ""  # accumulation of statements
 dict = {} # check for duplicate keys at some point, may therefore need a func
 key = ""
@@ -83,10 +83,10 @@ for akey in list(dict.keys()):
     newkey = match.group(2)
     if ( newkey in newdict ):
       alist = newdict[newkey]
-      alist += [ dict[akey] ]
+      alist += [ ( akey, dict[akey] ) ]
       newdict[newkey] = alist
     else:
-      newdict[newkey] = [ dict[akey] ]
+      newdict[newkey] = [ ( akey, dict[akey] ) ]
 
 # print out the sorted list of questions, combining debconf and d-i
 keys = list( newdict.keys() )
@@ -95,20 +95,20 @@ for akey in keys:
   #print akey
   alist = newdict[akey]
   #print( "%d, %s" % ( len(alist), akey ) )
-  if ( if_di_avail ):
+  if ( di_only ):
     difound = False
     for item in alist:
-      match = re.match( '^(\S+)', item )
+      match = re.match( '^(\S+)', item[ 0 ] )
       if ( None != match ):
         if ( 'd-i' == match.group(1) ):
           difound = True
-          print item
+          print item[1]
     if ( not difound ):
       for item in alist:
-        print item
+        print item[1]
   else:
     for item in alist:
-      print item
+      print item[1]
 
 # questions to look into:
 #  debconf/priority
