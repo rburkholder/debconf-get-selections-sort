@@ -9,3 +9,6 @@ brief instructions to sort and collate debconf output:
 * cat seed.txt | python seed.sort.py
 
 debconf-get-selections randomizes the output.  my program helps to sort the output into something meaningful.
+
+a bit more info at:  
+http://blog.raymond.burkholder.net/index.php?/archives/637-DebConf-Debian-Installer-Preseed.html
